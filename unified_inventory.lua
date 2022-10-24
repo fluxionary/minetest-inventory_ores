@@ -1,3 +1,7 @@
+local f = string.format
+
+local m_round = math.round
+
 unified_inventory.register_craft_type("inventory_ores:ore_spawns", {
 	description = "Ore spawns",
 	width = 1,
@@ -20,24 +24,32 @@ local function register_ore(def)
 		wherein = ItemStack("mapgen_stone")
 	end
 
-	local description = {futil.get_safe_short_description(wherein)}
-	if def.ore_type then
-		table.insert(description, ("ore_type = %q"):format(def.ore_type))
-	end
+	local ore_desc = futil.get_safe_short_description(def.ore)
+	local matrix_desc = futil.get_safe_short_description(wherein)
+
+	local description = {f("%s in %s", ore_desc, matrix_desc)}
 	if def.clust_scarcity then
-		table.insert(description, ("clust_scarcity = %i"):format(def.clust_scarcity))
-	end
-	if def.clust_num_ores then
-		table.insert(description, ("clust_num_ores = %i"):format(def.clust_num_ores))
+		table.insert(description, f("1 cluster about every %i nodes", m_round(def.clust_scarcity)))
 	end
 	if def.clust_size then
-		table.insert(description, ("clust_size = %i"):format(def.clust_size))
+		table.insert(description, f("a cluster is %i*%i*%i (%i) nodes",
+			def.clust_size, def.clust_size, def.clust_size, def.clust_size ^ 3))
 	end
-	if def.y_min then
-		table.insert(description, ("y_min = %i"):format(def.y_min))
+	if def.clust_num_ores then
+		table.insert(description, f("about %i ores in a cluster", def.clust_num_ores))
+	end
+	if def.clust_scarcity and def.clust_num_ores then
+		table.insert(description, f("so 1 %s in about every %i %s", ore_desc,
+			m_round(def.clust_scarcity / def.clust_num_ores), matrix_desc))
 	end
 	if def.y_max then
-		table.insert(description, ("y_max = %i"):format(def.y_max))
+		table.insert(description, f("upper y level = %i", def.y_max))
+	end
+	if def.y_min then
+		table.insert(description, f("lower y level = %i", def.y_min))
+	end
+	if def.ore_type then
+		table.insert(description, f("ore_type = %s", def.ore_type))
 	end
 
 	local meta = wherein:get_meta()

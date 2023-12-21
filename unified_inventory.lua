@@ -73,4 +73,4 @@ for _, def in pairs(minetest.registered_ores) do
 	i = i + 1
 end
 
-inventory_ores.api.register_on_register_ore(register_ore)
+inventory_ores.register_on_register_ore(register_ore)
